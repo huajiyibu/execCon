@@ -226,6 +226,7 @@ class ProtocolInvariantTests(unittest.TestCase):
         try:
             os.environ.pop("DMXAPI_API_KEY", None)
             os.environ["EVAL_SERVICE_API_KEY"] = "eval-only"
+            os.environ["EVAL_SERVICE_URL"] = "https://example.invalid"
             settings = load_settings(require_model_key=False)
             self.assertEqual(settings.eval_service_api_key, "eval-only")
         finally:
@@ -248,6 +249,7 @@ class ProtocolInvariantTests(unittest.TestCase):
         try:
             os.environ["DMXAPI_API_KEY"] = "secret-dmx"
             os.environ["EVAL_SERVICE_API_KEY"] = "secret-eval"
+            os.environ["EVAL_SERVICE_URL"] = "https://example.invalid"
             settings = load_settings()
             text = repr(settings) + json.dumps(settings.public_manifest())
             self.assertNotIn("secret-dmx", text)
