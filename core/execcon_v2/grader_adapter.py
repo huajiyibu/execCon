@@ -22,6 +22,8 @@ def grade_with_task(task: Any, output_root: Path, *, expected_task_id: str | Non
             raise OfficialGraderError("official task identity mismatch")
         written = task.submit_dir(output_root)
         result = task.grade(keep_alive=False)
+        if expected_task_id is not None and getattr(result, "task_id", None) != expected_task_id:
+            raise OfficialGraderError("official grade result task identity mismatch")
         raw = getattr(result, "raw", {}) or {}
         return {
             "grader_type": "official_sdk_task_grade",

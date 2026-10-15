@@ -55,28 +55,49 @@ cp config/.env.example .env
 
 `.env`、API key、SSH 凭据和运行报告不能提交到 GitHub。
 
-## 本地运行
+## 安装与本地运行
 
-在仓库根目录执行：
+推荐 Python 3.10+：
 
 ```bash
+python -m pip install -e ".[test]"
 python -m pytest -q
-python scripts/offline/run_offline_protocol.py
+python scripts/offline/run_offline_protocol.py --output reports/offline-run
 ```
 
-本地测试不需要模型 key，主要验证 bundle 完整性、候选来源、E0/E1 处理纯度、收敛稳定性、MCP 错误处理和 clean staging。
+`settings.py` 会自动读取仓库根目录的 `.env`；已经存在的进程环境变量优先于 `.env`。离线测试不需要真实 API key。运行报告目录属于本地产物，不要提交。
+
+本地测试主要验证 bundle 完整性、候选来源、E0/E1 处理纯度、收敛稳定性、MCP 错误处理和 clean staging。
 
 ## 远端脚本
 
-`scripts/remote/` 下的脚本需要配置 EvoHarness 服务：
+`scripts/remote/` 下的脚本需要配置 EvoHarness 服务。候选采集入口已经参数化 h1–h3：
+
+```bash
+python scripts/remote/collect_candidate.py \\
+  --stage h2 \\
+  --specialist numerics_stats \\
+  --candidate-id h2-numerics-001 \\
+  --output runs/h2-numerics-001/candidate.json
+```
+
+各阶段 specialist pool 固定为 h1=2、h2=5、h3=8，并写入候选 provenance。`canary_h1.py` 和 `evoharness_minimal_repro.py` 是 h1 专用诊断脚本。
 
 - `canary_h1.py`：h1 无模型 provisioning 检查；
 - `inspect_task.py`：公开任务检查；
 - `probe_platform.py`：平台探针；
-- `collect_candidate.py`：模型候选采集；
+- `collect_candidate.py`：模型候选采集；使用 `--stage h1|h2|h3` 支持 2/5/8 specialist pool，可用 `--output` 指定候选报告路径；
 - `evoharness_minimal_repro.py`：平台问题复现。
 
 远端实验必须先通过 provisioning 和 runtime smoke 检查。基础设施失败单独记录，不计为模型得分 0。
+
+## 依赖
+
+离线核心仅使用 Python 标准库；测试和远端脚本依赖分别由 `pyproject.toml` 的 `test`、`remote` extra 声明。推荐安装：
+
+```bash
+python -m pip install -e ".[test]"
+```
 
 ## 当前限制
 

@@ -102,6 +102,10 @@ def load_bundle_set(path: Path, *, bundle_root: Path | None = None) -> dict[str,
             identity = bundle.get("identity") or {}
             if identity.get("task_id") != manifest.get("task_id"):
                 raise BundleSetError("candidate task identity differs from bundle-set")
+            if identity.get("spec_sha256") != manifest.get("spec_sha256"):
+                raise BundleSetError("candidate spec provenance differs from bundle-set")
+            if identity.get("pool_sha256") != manifest.get("pool_sha256"):
+                raise BundleSetError("candidate pool provenance differs from bundle-set")
             if identity.get("producer_id") and identity["producer_id"] != candidate.get("producer_id"):
                 raise BundleSetError("candidate producer identity does not match candidate metadata")
             if identity.get("session_id_hash") != ((candidate.get("identity") or {}).get("session_id_hash") or candidate.get("session_id_hash")):

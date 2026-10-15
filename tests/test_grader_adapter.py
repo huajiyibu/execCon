@@ -33,6 +33,22 @@ class Task:
         return Result()
 
 
+class WrongResult:
+    task_id = "other"
+    pass_rate = 0.5
+    overall_success = False
+    n_passed = 1
+    n_total = 2
+    per_verifier = []
+    execution_mode = "remote"
+    raw = {}
+
+
+class WrongResultTask(Task):
+    def grade(self, keep_alive=False):
+        return WrongResult()
+
+
 class FailingTask:
     def submit_dir(self, root):
         raise RuntimeError("submit failed")
@@ -49,6 +65,14 @@ class GraderAdapterTests(unittest.TestCase):
     def test_wraps_failure(self):
         with self.assertRaises(OfficialGraderError):
             grade_with_task(FailingTask(), Path("."))
+
+    def test_rejects_task_identity_mismatch(self):
+        with self.assertRaises(OfficialGraderError):
+            grade_with_task(Task(), Path("."), expected_task_id="other")
+
+    def test_rejects_grade_result_identity_mismatch(self):
+        with self.assertRaises(OfficialGraderError):
+            grade_with_task(WrongResultTask(), Path("."), expected_task_id="task")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -45,6 +46,12 @@ def main() -> int:
         report["stages"].append("canary_loaded")
         validate_canary_report(canary, required_runs=3, expected_task_id=TASK_ID)
         bundle_set = load_bundle_set(args.bundle_set, bundle_root=args.bundle_root)
+        spec_path = Path(args.spec)
+        if not spec_path.is_file():
+            raise ValueError("--spec must point to an existing spec file")
+        spec_sha256 = hashlib.sha256(spec_path.read_bytes()).hexdigest()
+        if spec_sha256 != bundle_set.get("spec_sha256"):
+            raise ValueError("runtime spec hash differs from bundle-set provenance")
         report["stages"].append("bundle_set_validated")
         candidates = []
         for entry in bundle_set["candidates"]:
@@ -53,7 +60,16 @@ def main() -> int:
                 raise ValueError("bundle task identity mismatch")
             identity = bundle["identity"]
             candidates.append({"candidate_id": entry["candidate_id"], "specialist": entry.get("specialist"), "bundle_hash": entry["bundle_hash"], "session_id_hash": identity["session_id_hash"], "producer_id": identity["producer_id"], "provenance": {"task_id": identity["task_id"], "spec_sha256": identity["spec_sha256"], "pool_sha256": identity["pool_sha256"], "validator_version": "execcon-public-validator-v1"}, "files": bundle["files"], "evidence": entry.get("evidence", {})})
-        qualification = qualify_candidates(candidates, required_outputs=["results.json", "exercise_boundary_tier2.npy"], required_specialists=sorted(REQUIRED_SPECIALISTS), expected_provenance={"task_id": bundle_set["task_id"]})
+        qualification = qualify_candidates(
+            candidates,
+            required_outputs=["results.json", "exercise_boundary_tier2.npy"],
+            required_specialists=sorted(REQUIRED_SPECIALISTS),
+            expected_provenance={
+                "task_id": bundle_set["task_id"],
+                "spec_sha256": bundle_set["spec_sha256"],
+                "pool_sha256": bundle_set["pool_sha256"],
+            },
+        )
         qualified = set(qualification["complete_candidate_ids"])
         report["qualification"] = qualification
         identity = {"bundle_set_hash": bundle_set["bundle_set_hash"], "required_outputs": ["results.json", "exercise_boundary_tier2.npy"], "algorithm": "execcon-v2-coherent-candidate-selector"}
@@ -80,7 +96,17 @@ def main() -> int:
                     from execcon_v2.grader_adapter import grade_with_task
                     task = factory()
                     try:
-                        return grade_with_task(task, base / "output")
+                        return grade_with_task(
+                            task,
+                            base / "output",
+                            expected_task_id=bundle_set["task_id"],
+                            provenance={
+                                "task_id": bundle_set["task_id"],
+                                "bundle_set_hash": bundle_set["bundle_set_hash"],
+                                "spec_sha256": bundle_set["spec_sha256"],
+                                "pool_sha256": bundle_set["pool_sha256"],
+                            },
+                        )
                     finally:
                         close = getattr(task, "close", None)
                         if callable(close):

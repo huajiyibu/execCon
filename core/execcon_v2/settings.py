@@ -2,10 +2,28 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 
 
 class SettingsError(ValueError):
     pass
+
+
+def _load_dotenv() -> None:
+    """Load a local .env without overriding variables already in the process."""
+    candidates = [Path.cwd() / ".env", Path(__file__).resolve().parents[2] / ".env"]
+    for path in candidates:
+        if not path.is_file():
+            continue
+        for raw in path.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key, value = key.strip(), value.strip().strip("'\"")
+            if key and key not in os.environ:
+                os.environ[key] = value
+        break
 
 
 @dataclass(frozen=True)
@@ -29,6 +47,7 @@ class Settings:
 
 
 def load_settings(*, require_model_key: bool = True) -> Settings:
+    _load_dotenv()
     dmx = os.environ.get("DMXAPI_API_KEY", "")
     evaluation = os.environ.get("EVAL_SERVICE_API_KEY", "")
     service_url = os.environ.get("EVAL_SERVICE_URL", "")

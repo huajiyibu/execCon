@@ -17,10 +17,9 @@ from execcon_v2.bundle import freeze_bundle, load_bundle
 from execcon_v2.mcp import command_stdout, decode_read_bytes, tool_text
 from execcon_v2.safe_json import write_public_json
 from execcon_v2.settings import load_settings
+from execcon_v2.stages import get_stage
 
-TASK_ID = "business_finance/american_option_pricing_ls"
 REQUIRED_OUTPUTS = ["results.json", "exercise_boundary_tier2.npy"]
-ALLOWED_SPECIALISTS = {"numerics_stats", "runtime_base"}
 
 
 def sha_bytes(data: bytes) -> str:
@@ -39,24 +38,31 @@ def usage(resp: dict) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--specialist", choices=sorted(ALLOWED_SPECIALISTS), required=True)
+    parser.add_argument("--stage", choices=("h1", "h2", "h3"), default="h1")
+    parser.add_argument("--specialist", required=True)
     parser.add_argument("--candidate-id", required=True)
     parser.add_argument("--work-root", type=Path, default=ROOT)
+    parser.add_argument("--output", type=Path, default=None, help="optional explicit candidate report path")
     parser.add_argument("--max-turns", type=int, default=32)
     args = parser.parse_args()
+    stage = get_stage(args.stage)
+    if args.specialist not in stage.specialists:
+        parser.error(f"specialist {args.specialist!r} is not available in {args.stage}")
     settings = load_settings()
 
     from simple_agentic_evals import EvalClient
 
     run_dir = args.work_root / "runs" / args.candidate_id
     file_dir = run_dir / "files"
+    report_path = args.output or (run_dir / "candidate.json")
     run_dir.mkdir(parents=True, exist_ok=True)
     file_dir.mkdir(parents=True, exist_ok=True)
     report = {
         "schema_version": 1,
         "candidate_id": args.candidate_id,
         "specialist": args.specialist,
-        "task_id": TASK_ID,
+        "stage": args.stage,
+        "task_id": stage.task_id,
         "status": "running",
         "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "trajectory": [],
@@ -66,7 +72,14 @@ def main() -> int:
     }
 
     client = EvalClient(base_url=settings.eval_service_url, api_key=settings.eval_service_api_key, timeout=900.0)
-    task = client.task(settings.dataset, settings.benchmark, 1, task_id=TASK_ID, resource_mode="accumulative", at_stage=1)
+    task = client.task(
+        settings.dataset,
+        settings.benchmark,
+        stage.cohort,
+        task_id=stage.task_id,
+        resource_mode=stage.resource_mode,
+        at_stage=stage.harness,
+    )
     try:
         task.start()
         report["session_id_hash"] = sha_bytes(task.session_id.encode("utf-8"))
@@ -75,6 +88,10 @@ def main() -> int:
             "stage": task.resources.get("stage"),
             "names": task.resources.get("names") or [],
         }
+        missing_pool = set(stage.specialists) - set(report["resources"]["names"])
+        if missing_pool:
+            raise RuntimeError(f"stage pool is missing specialists: {sorted(missing_pool)}")
+
         task.start_remote_sandbox(timeout=600.0)
         with task.mcp_session(task.remote_mcp_server, timeout=180.0) as mcp:
             tools = mcp.list_tools()[:5]
@@ -169,20 +186,21 @@ Specialist metadata: {json.dumps(specialist_description, ensure_ascii=False)}"""
             report["runtime_checks"] = checks
             report["status"] = "validated" if checks["required_outputs_present"] and checks["public_self_check"] == "pass" else "ineligible"
             report["finished_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-            write_public_json(run_dir / "candidate.json", report)
+            write_public_json(report_path, report)
             if report["status"] != "validated":
                 print(json.dumps({"candidate_id": args.candidate_id, "status": report["status"], "validation": validation}, ensure_ascii=False, indent=2))
                 return 2
 
             identity = {
-                "task_id": TASK_ID,
-                "cohort": 1,
-                "harness": 1,
-                "resource_mode": "accumulative",
+                "task_id": stage.task_id,
+                "cohort": stage.cohort,
+                "harness": stage.harness,
+                "resource_mode": stage.resource_mode,
+                "stage": args.stage,
                 "model": settings.model,
                 "model_settings_sha256": sha_json({"max_tokens": 8192, "temperature": 0.2, "reasoning_effort": "none"}),
                 "spec_sha256": sha_bytes(spec_bytes),
-                "pool_sha256": sha_json(report["resources"]),
+                "pool_sha256": sha_json({"stage": args.stage, "specialists": list(stage.specialists), "resources": report["resources"]}),
                 "prompt_sha256": sha_bytes(system_prompt.encode("utf-8")),
                 "tool_schema_sha256": sha_json(tool_schema),
                 "code_sha256": sha_bytes(Path(__file__).read_bytes()),
@@ -194,7 +212,7 @@ Specialist metadata: {json.dumps(specialist_description, ensure_ascii=False)}"""
             load_bundle(bundle)
             report["bundle_hash"] = bundle.name
             report["status"] = "complete"
-            write_public_json(run_dir / "candidate.json", report)
+            write_public_json(report_path, report)
             print(json.dumps({"candidate_id": args.candidate_id, "status": report["status"], "bundle_hash": bundle.name, "files": files}, ensure_ascii=False, indent=2))
             return 0
     except Exception as exc:

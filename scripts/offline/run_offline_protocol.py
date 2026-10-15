@@ -4,17 +4,20 @@ import argparse
 import base64
 import hashlib
 import json
+import sys
 import tempfile
 from pathlib import Path
 
-from src.execcon_v2.bundle_set import freeze_bundle_set
-from src.execcon_v2.clean_grade import stage_and_grade
-from src.execcon_v2.convergence import converge, property_comparison
-from src.execcon_v2.inputs import assert_treatment_purity, build_convergence_input
-from src.execcon_v2.interference import build_duplicate, build_irrelevant, build_unsupported_conflict, misbind_evidence
-from src.execcon_v2.qualify import qualify_candidates
-from src.execcon_v2.safe_json import write_public_json
-from src.execcon_v2.summary import summarize_cells
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "core"))
+
+from execcon_v2.clean_grade import stage_and_grade
+from execcon_v2.convergence import converge, property_comparison
+from execcon_v2.inputs import assert_treatment_purity, build_convergence_input
+from execcon_v2.interference import build_duplicate, build_irrelevant, build_unsupported_conflict, misbind_evidence
+from execcon_v2.qualify import qualify_candidates
+from execcon_v2.safe_json import write_public_json
+from execcon_v2.summary import summarize_cells
 
 REQUIRED = ["results.json", "exercise_boundary_tier2.npy"]
 SPECIALISTS = ["numerics_stats", "runtime_base"]
