@@ -53,8 +53,11 @@ def qualify_candidates(
             and checks.get("public_self_check") == "pass"
         ):
             recoverable.append(candidate["candidate_id"])
+    from .discrimination import assess_candidate_discrimination
+    discrimination = assess_candidate_discrimination(candidates, required_outputs=sorted(required))
     result = {
         "schema_version": 1,
+        "candidate_discrimination": discrimination,
         "covered": covered,
         "recoverable": bool(recoverable),
         "n_complete_candidates": len(complete),

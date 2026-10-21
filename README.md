@@ -104,7 +104,7 @@ python -m pip install -e ".[test]"
 - h4–h6 暂时无法运行，因为平台缺少对应 agent bundle；
 - 远端模型执行曾出现 runtime 权限、缓存目录和 artifact 读取问题；
 - 这些问题属于平台基础设施问题，不等于 ExecCon 方法或模型失败；
-- 只有通过全部验收门禁并完成官方评分的 cell，才能进入正式主表。
+- 只有通过全部验收门禁、候选区分度门禁并完成官方评分的 cell，才能进入正式主表；候选没有可观察预处理差异时标记为 `diagnostic_only_no_discrimination`，不进入 treatment-effect 分母。
 
 详细规则见：
 
