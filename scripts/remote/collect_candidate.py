@@ -159,9 +159,10 @@ Specialist metadata: {json.dumps(specialist_description, ensure_ascii=False)}"""
             finally:
                 llm.close()
 
-            listing = command_stdout(mcp, "find base/output -type f -printf '%P\\n' | LC_ALL=C sort")
+            required_output_set = set(REQUIRED_OUTPUTS)
+            listing = command_stdout(mcp, "find base/output -maxdepth 1 -type f -printf '%P\\n' | LC_ALL=C sort")
             files = []
-            for rel in [line.strip() for line in listing.splitlines() if line.strip()]:
+            for rel in [line.strip() for line in listing.splitlines() if line.strip() and line.strip() in required_output_set]:
                 data = decode_read_bytes(mcp.call_tool("read_bytes", {"path": f"base/output/{rel}"}))
                 report["tool_calls"] += 1
                 local = file_dir / rel
