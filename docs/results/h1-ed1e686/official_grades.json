@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "github_commit": "ed1e686",
+  "task_id": "business_finance/american_option_pricing_ls",
+  "grades": {
+    "E0": {
+      "task_id": "business_finance/american_option_pricing_ls",
+      "pass_rate": 0.0,
+      "overall_success": false,
+      "n_passed": 2,
+      "n_total": 4,
+      "execution_mode": null,
+      "raw_sha256": "a633b59b9e1d4aa68ae586c0ec5abd82a569ceb067dc6ec2272130cf7e2bec41",
+      "submitted": [
+        "exercise_boundary_tier2.npy",
+        "results.json"
+      ]
+    },
+    "E1": {
+      "task_id": "business_finance/american_option_pricing_ls",
+      "pass_rate": 0.0,
+      "overall_success": false,
+      "n_passed": 2,
+      "n_total": 4,
+      "execution_mode": null,
+      "raw_sha256": "48fb63b7edb1dae4731766bdeb1c65b44eca97091726a4a7902778f33e0d6d83",
+      "submitted": [
+        "exercise_boundary_tier2.npy",
+        "results.json"
+      ]
+    },
+    "E2": {
+      "task_id": "business_finance/american_option_pricing_ls",
+      "pass_rate": 0.0,
+      "overall_success": false,
+      "n_passed": 1,
+      "n_total": 4,
+      "execution_mode": null,
+      "raw_sha256": "d95c5b64366bb64d5e3c7726d0c45c7339702b14e793cffeb9f731ab9234a041",
+      "submitted": [
+        "exercise_boundary_tier2.npy",
+        "results.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "github_commit": "ed1e686",
+  "task_id": "business_finance/american_option_pricing_ls",
+  "bundle_set_hash": "09e236a8cab542f950b3478d4e79ad8bd05abd5916c1b5a246784694b9f535cd",
+  "qualification": {
+    "schema_version": 1,
+    "covered": true,
+    "recoverable": true,
+    "n_complete_candidates": 2,
+    "complete_candidate_ids": [
+      "h1-numerics-ed1e686-001",
+      "h1-runtime-ed1e686-001"
+    ],
+    "recoverable_candidate_ids": [
+      "h1-numerics-ed1e686-001",
+      "h1-runtime-ed1e686-001"
+    ],
+    "required_outputs": [
+      "exercise_boundary_tier2.npy",
+      "results.json"
+    ],
+    "required_specialists": [
+      "numerics_stats",
+      "runtime_base"
+    ]
+  },
+  "cells": [
+    {
+      "condition": "base",
+      "E0": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "E1": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "comparison": {
+        "decision_flip": false,
+        "artifact_flip": false
+      },
+      "E2": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      }
+    },
+    {
+      "condition": "duplicate",
+      "E0": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "E1": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "comparison": {
+        "decision_flip": false,
+        "artifact_flip": false
+      }
+    },
+    {
+      "condition": "irrelevant",
+      "E0": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "E1": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "comparison": {
+        "decision_flip": false,
+        "artifact_flip": false
+      }
+    },
+    {
+      "condition": "unsupported_conflict",
+      "E0": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "E1": {
+        "status": "selected",
+        "selected_candidate_id": "h1-runtime-ed1e686-001",
+        "selected_bundle_hash": "8e2fa7e9d198d3b7453e09e35fcbc0e64cd41e388eed42a00af8c05a246bfc81",
+        "decision_hash": "cc550e66682953287e373b31cbe3dd029f1cb2831d154443329e53cf24a3210d",
+        "artifact_set_hash": "6610d9d4f9625c70955e7241555726b9c115f2406d6de939b6d4a0ca5d967d77"
+      },
+      "comparison": {
+        "decision_flip": false,
+        "artifact_flip": false
+      },
+      "E2": {
+        "status": "selected",
+        "selected_candidate_id": "h1-numerics-ed1e686-001",
+        "selected_bundle_hash": "5cc500b99912b7a23d058acb2fbc5d7a535bd3ab8df86e71d1275e9545dfd811",
+        "decision_hash": "c658e315ccee67ab1a0083e49bb90957bc5eb4b7a9dcd02346ac6ce38e796ab3",
+        "artifact_set_hash": "20049a42ca359b9e43d0553d8a9e7eba535d6c70220ae08076aabe7ed4b22c08"
+      }
+    }
+  ],
+  "official_grader": "pending_distinct_valid_cells",
+  "official_grades": {
+    "E0": {
+      "task_id": "business_finance/american_option_pricing_ls",
+      "pass_rate": 0.0,
+      "overall_success": false,
+      "n_passed": 2,
+      "n_total": 4,
+      "execution_mode": null,
+      "raw_sha256": "a633b59b9e1d4aa68ae586c0ec5abd82a569ceb067dc6ec2272130cf7e2bec41",
+      "submitted": [
+        "exercise_boundary_tier2.npy",
+        "results.json"
+      ]
+    },
+    "E1": {
+      "task_id": "business_finance/american_option_pricing_ls",
+      "pass_rate": 0.0,
+      "overall_success": false,
+      "n_passed": 2,
+      "n_total": 4,
+      "execution_mode": null,
+      "raw_sha256": "48fb63b7edb1dae4731766bdeb1c65b44eca97091726a4a7902778f33e0d6d83",
+      "submitted": [
+        "exercise_boundary_tier2.npy",
+        "results.json"
+      ]
+    },
+    "E2": {
+      "task_id": "business_finance/american_option_pricing_ls",
+      "pass_rate": 0.0,
+      "overall_success": false,
+      "n_passed": 1,
+      "n_total": 4,
+      "execution_mode": null,
+      "raw_sha256": "d95c5b64366bb64d5e3c7726d0c45c7339702b14e793cffeb9f731ab9234a041",
+      "submitted": [
+        "exercise_boundary_tier2.npy",
+        "results.json"
+      ]
+    }
+  },
+  "final_classification": "valid_h1_protocol_and_official_grade_diagnostic",
+  "h1_conclusion": "E0 and E1 selected the same artifact and received the same official grade; E2 misbound evidence selected the other artifact and scored lower."
+}
